@@ -1,34 +1,107 @@
-import React from 'react'
-import { Segment, Header, Form, Button } from 'semantic-ui-react'
+import React, { useState } from "react";
+import { Segment, Header, Form, Button } from "semantic-ui-react";
+import cuid from "cuid";
 
-function EventForm({setFormOpen}) {
-    return (
-        <Segment clearing>
-            <Header content="Create new event" />
-            <Form>
-                <Form.Field>
-                    <input type="text" placeholder="Event Title" />
-                </Form.Field>
-                <Form.Field>
-                    <input type="text" placeholder="Category" />
-                </Form.Field>
-                <Form.Field>
-                    <input type="text" placeholder="Description" />
-                </Form.Field>
-                <Form.Field>
-                    <input type="text" placeholder="City" />
-                </Form.Field>
-                <Form.Field>
-                    <input type="text" placeholder="Venue" />
-                </Form.Field>
-                <Form.Field>
-                    <input type="date" placeholder="Date" />
-                </Form.Field>
-                <Button type="submit"  floated="right" positive content="Submit" />
-                <Button type="submit" onClick={() => setFormOpen(false)} floated="right" content="Cancel" />
-            </Form>
-        </Segment>
-    )
+function EventForm({ setFormOpen, setEvents, createEvent, selectedEvent, updateEvent }) {
+  const initialValue = selectedEvent ?? {
+    title: "",
+    category: "",
+    description: "",
+    city: "",
+    venue: "",
+    date: "",
+  };
+
+  const [values, setValues] = useState(initialValue);
+
+  function handleFormSubmit() {
+
+    selectedEvent ? updateEvent({...selectedEvent, ...values}) :
+    
+    // console.log(values);
+    createEvent({
+      ...values,
+      id: cuid(),
+      hostedBy: "Ravikesh",
+      attendees: [],
+      hostPhotoURL: "/assets/user.png",
+    });
+    setFormOpen(false);
+  }
+
+  function handleInputChange(e) {
+    const { name, value } = e.target;
+    setValues({ ...values, [name]: value });
+  }
+
+  return (
+    <Segment clearing>
+      <Header content={selectedEvent ? "Edit the event" : "Create new event"} />
+      <Form onSubmit={handleFormSubmit}>
+        <Form.Field>
+          <input
+            type="text"
+            placeholder="Event Title"
+            name="title"
+            value={values.title}
+            onChange={(e) => handleInputChange(e)}
+          />
+        </Form.Field>
+        <Form.Field>
+          <input
+            type="text"
+            placeholder="Category"
+            name="category"
+            value={values.category}
+            onChange={(e) => handleInputChange(e)}
+          />
+        </Form.Field>
+        <Form.Field>
+          <input
+            type="text"
+            placeholder="Description"
+            name="description"
+            value={values.description}
+            onChange={(e) => handleInputChange(e)}
+          />
+        </Form.Field>
+        <Form.Field>
+          <input
+            type="text"
+            placeholder="City"
+            name="city"
+            value={values.city}
+            onChange={(e) => handleInputChange(e)}
+          />
+        </Form.Field>
+        <Form.Field>
+          <input
+            type="text"
+            placeholder="Venue"
+            name="venue"
+            value={values.venue}
+            onChange={(e) => handleInputChange(e)}
+          />
+        </Form.Field>
+        <Form.Field>
+          <input
+            type="date"
+            placeholder="Date"
+            name="date"
+            value={values.date}
+            onChange={(e) => handleInputChange(e)}
+          />
+        </Form.Field>
+        <Button type="submit" floated="right" positive content="Submit" />
+        <Button
+          type="submit"
+          onClick={() => setFormOpen(false)}
+          floated="right"
+          content="Cancel"
+        />
+      </Form>
+    </Segment>
+  );
 }
 
-export default EventForm
+export default EventForm;
